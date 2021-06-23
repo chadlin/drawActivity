@@ -2,7 +2,9 @@ package com.example.drawactivity
 
 import android.os.Bundle
 import android.view.Menu
+import android.view.MenuInflater
 import android.view.MenuItem
+import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
@@ -20,6 +22,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         paintBoard2 = findViewById(R.id.paint_board2)
+        paintBoard2.setLayerType(View.LAYER_TYPE_SOFTWARE, null)
         controlUndo = findViewById(R.id.ControlUndo)
         controlRedo = findViewById(R.id.ControlRedo)
 
@@ -39,15 +42,10 @@ class MainActivity : AppCompatActivity() {
     private val ERASE_MENU_ID = Menu.FIRST + 3
     private val SRCATOP_MENU_ID = Menu.FIRST + 4
 
-    @Suppress("UNREACHABLE_CODE")
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        return super.onCreateOptionsMenu(menu)
-        menuInflater.inflate(R.menu.option_menu, menu)
-        menu?.add(0, COLOR_MENU_ID, 0, "Color")?.setShortcut('3', 'c');
-        menu?.add(0, EMBOSS_MENU_ID, 0, "Emboss")?.setShortcut('4', 's');
-        menu?.add(0, BLUR_MENU_ID, 0, "Blur")?.setShortcut('5', 'z');
-        menu?.add(0, ERASE_MENU_ID, 0, "Erase")?.setShortcut('5', 'z');
-        menu?.add(0, SRCATOP_MENU_ID, 0, "SrcATop")?.setShortcut('5', 'z');
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        val inflater: MenuInflater = menuInflater
+        inflater.inflate(R.menu.option_menu, menu)
+        return true
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
@@ -55,8 +53,22 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return super.onOptionsItemSelected(item)
-
+        // Handle item selection
+        return when (item.itemId) {
+            R.id.draw -> {
+                paintBoard2.setPaint(PaintBoard2.Companion.Mode.DRAW)
+                true
+            }
+            R.id.eraser -> {
+                paintBoard2.setPaint(PaintBoard2.Companion.Mode.ERASER)
+                true
+            }
+            R.id.changeColor -> {
+                paintBoard2.setPaint(PaintBoard2.Companion.Mode.HIGHLIGHTER)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
 }

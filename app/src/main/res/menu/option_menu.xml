@@ -1,4 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <item
+        android:id="@+id/draw"
+        android:title="DRAW"
+        android:icon="@drawable/ic_baseline_format_paint_24"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/eraser"
+        android:title="ERASER"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/changeColor"
+        android:title="ChangeColor"
+        app:showAsAction="never"/>
 </menu>
