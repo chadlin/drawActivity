@@ -56,15 +56,15 @@ class MainActivity : AppCompatActivity() {
         // Handle item selection
         return when (item.itemId) {
             R.id.draw -> {
-                paintBoard2.setPaint(PaintBoard2.Companion.Mode.DRAW)
+                paintBoard2.setPenMode()
                 true
             }
             R.id.eraser -> {
-                paintBoard2.setPaint(PaintBoard2.Companion.Mode.ERASER)
+                paintBoard2.setEraserMode()
                 true
             }
             R.id.changeColor -> {
-                paintBoard2.setPaint(PaintBoard2.Companion.Mode.HIGHLIGHTER)
+                paintBoard2.setHighliterMode()
                 true
             }
             else -> super.onOptionsItemSelected(item)

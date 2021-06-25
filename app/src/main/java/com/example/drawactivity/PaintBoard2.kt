@@ -15,21 +15,20 @@ class PaintBoard2 @JvmOverloads constructor(context: Context?, attrs: AttributeS
     View(context, attrs) {
 
     private val TAG = javaClass.simpleName
-    private val mPaint: Paint
+    private var statefulPaint: StatefulPaint = StatefulPaint()
     private val backgroundColor = ResourcesCompat.getColor(resources, R.color.colorBackground, null)
-    private val drawColor = ResourcesCompat.getColor(resources, R.color.teal_700, null)
-    private val highLighterColor = ResourcesCompat.getColor(resources, R.color.colorPaint, null)
     private lateinit var mBitmap: Bitmap
     private lateinit var mBitmapCanvas: Canvas
     private val touchTolerance = ViewConfiguration.get(context).scaledTouchSlop
-    private lateinit var frame: Rect
 
     private var undoneStrokeList = ArrayList<Stroke>()
 
-    private var drawingMode: Mode = Mode.DRAW
-
     private var renderObject:RenderObject
     private var pen:Pen
+
+    enum class DrawMode {
+        DRAW, HIGHLIGHTER, ERASER, PALM_ERASER
+    }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
@@ -37,8 +36,6 @@ class PaintBoard2 @JvmOverloads constructor(context: Context?, attrs: AttributeS
         mBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
         mBitmapCanvas = Canvas(mBitmap)
         mBitmapCanvas.drawColor(backgroundColor)
-        val inset = 40
-        frame = Rect(inset, inset, width - inset, height - inset)
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -89,56 +86,19 @@ class PaintBoard2 @JvmOverloads constructor(context: Context?, attrs: AttributeS
 
 
     init {
-        mPaint = Paint().apply {
-            color = drawColor
-            // Smooths out edges of what is drawn without affecting shape.
-            isAntiAlias = true
-            // Dithering affects how colors with higher-precision than the device are down-sampled.
-            isDither = true
-            style = Paint.Style.STROKE // default: FILL
-            strokeJoin = Paint.Join.ROUND // default: MITER
-            strokeCap = Paint.Cap.ROUND // default: BUTT
-            strokeWidth = STROKE_WIDTH // default: Hairline-width (really thin)
-        }
-
-        pen = Pen(mPaint, touchTolerance)
+        pen = Pen(statefulPaint, touchTolerance)
         renderObject = pen
     }
 
-    @SuppressLint("ResourceAsColor")
-    fun setPaint(mode: Mode) {
-        mPaint.xfermode = null
-        mPaint.alpha = 0xFF
-        when (mode) {
-            Mode.DRAW -> {
-                drawingMode = Mode.DRAW
-                mPaint.xfermode = null
-                Toast.makeText(context, "$drawingMode", LENGTH_SHORT).show()
-                true
-            }
-            Mode.ERASER -> {
-                drawingMode = Mode.ERASER
-                Toast.makeText(context, "$drawingMode", LENGTH_SHORT).show()
-                mPaint.xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR)
-                true
-            }
-            Mode.HIGHLIGHTER -> {
-                drawingMode = Mode.HIGHLIGHTER
-                mPaint.xfermode = null
-                mPaint.color = highLighterColor
-                mPaint.alpha = 155
-            }
-            else -> Toast.makeText(context, "not exist", LENGTH_SHORT).show()
-
-        }
+    fun setPenMode(){
+        statefulPaint.setMode(DrawMode.DRAW)
     }
 
-    companion object {
-        private const val STROKE_WIDTH = 12f // has to be float
+    fun setEraserMode(){
+        statefulPaint.setMode(DrawMode.ERASER)
+    }
 
-        // endregion
-        enum class Mode {
-            DRAW, HIGHLIGHTER, ERASER, PALM_ERASER
-        }
+    fun setHighliterMode(){
+        statefulPaint.setMode(DrawMode.HIGHLIGHTER)
     }
 }
