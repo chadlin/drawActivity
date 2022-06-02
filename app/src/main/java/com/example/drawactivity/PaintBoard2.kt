@@ -7,8 +7,6 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
-import android.widget.Toast
-import android.widget.Toast.LENGTH_SHORT
 import androidx.core.content.res.ResourcesCompat
 
 class PaintBoard2 @JvmOverloads constructor(context: Context?, attrs: AttributeSet? = null) :

@@ -5,7 +5,7 @@ import android.graphics.Path
 import android.util.Log
 import android.view.MotionEvent
 
-class Pen constructor(private val mPaint: Paint, private val touchTolerance: Int) : RenderObject() {
+class surfacePaint constructor(private val mPaint: Paint, private val touchTolerance: Int) : RenderObject() {
 
     private lateinit var curPath: Path
     private var currentX = 0f
