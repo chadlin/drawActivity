@@ -2,56 +2,58 @@ package com.example.drawactivity
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.Canvas
+import android.graphics.*
 import android.util.AttributeSet
 import android.util.Log
-import android.view.MotionEvent
-import android.view.SurfaceHolder
-import android.view.SurfaceView
-import android.view.ViewConfiguration
-import androidx.core.content.res.ResourcesCompat
+import android.view.*
 
 class SurfaceViewDemo @JvmOverloads constructor(context: Context?, attrs: AttributeSet? = null) :
 	SurfaceView(context, attrs), SurfaceHolder.Callback {
 
-	private val TAG = javaClass.simpleName
-	private var statefulPaint: StatefulPaint = StatefulPaint()
-	private val backgroundColor =
-		ResourcesCompat.getColor(resources, R.color.colorBackgroundSurfaceView, null)
-	private lateinit var mBitmap: Bitmap
-	private lateinit var mBitmapCanvas: Canvas
-	private val touchTolerance = ViewConfiguration.get(context).scaledTouchSlop
-	private var undoneStrokeList = ArrayList<Stroke>()
-
-	private var pen: Pen = Pen(statefulPaint, touchTolerance)
-
-	private lateinit var mCanvas: Canvas
-
+	private var paint: Paint
+	private lateinit var path: Path
 
 	init {
 		Log.d("XXXXX", "init:")
+		setZOrderOnTop(true)
+		holder.setFormat(PixelFormat.TRANSPARENT)
 		holder.addCallback(this)
+		paint = Paint()
+		paint.apply {
+			color = Color.BLACK
+			isAntiAlias = true
+			strokeWidth = 50F
+		}
+
 	}
 
 	@SuppressLint("ClickableViewAccessibility")
-	override fun onTouchEvent(event: MotionEvent): Boolean {
-		when (event.action) {
-			MotionEvent.ACTION_DOWN -> {
-				pen.actionDown(event)
-			}
-			MotionEvent.ACTION_MOVE -> {
-				pen.actionMove(event)
-			}
-			MotionEvent.ACTION_UP -> {
-				pen.actionUp(event)
-			}
-		}
-		return true
-	}
-
 	override fun surfaceCreated(holder: SurfaceHolder) {
 		Log.d("XXXXX", "=======surfaceCreated========")
+		path = Path()
+		setOnTouchListener { _, event ->
+			val eventX = event.x
+			val eventY = event.y
+			when (event.action) {
+				MotionEvent.ACTION_DOWN -> {
+					path.reset()
+					path.moveTo(eventX, eventY)
+				}
+				MotionEvent.ACTION_MOVE -> {
+					path.lineTo(eventX, eventY)
+				}
+				MotionEvent.ACTION_UP -> {
+					path.lineTo(event.x, event.y)
+					val canvas1 = holder.lockCanvas()
+					canvas1.drawPath(path, paint)
+					holder.unlockCanvasAndPost(canvas1)
+				}
+			}
+			val canvas = holder.lockCanvas()
+			canvas.drawPath(path, paint)
+			holder.unlockCanvasAndPost(canvas)
+			true
+		}
 	}
 
 	override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
