@@ -3,9 +3,12 @@ package com.example.drawactivity
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.*
+import android.media.MediaPlayer
+import android.net.Uri
 import android.util.AttributeSet
 import android.util.Log
 import android.view.*
+import java.io.IOException
 
 class SurfaceViewDemo @JvmOverloads constructor(context: Context?, attrs: AttributeSet? = null) :
 	SurfaceView(context, attrs), SurfaceHolder.Callback {
@@ -15,6 +18,7 @@ class SurfaceViewDemo @JvmOverloads constructor(context: Context?, attrs: Attrib
 	private lateinit var mCanvas: Canvas
 	private lateinit var mThread: Thread
 	private var flag: Boolean = false
+	private var mediaPlayer: MediaPlayer
 
 	init {
 		Log.d("XXXXX", "init:")
@@ -32,8 +36,25 @@ class SurfaceViewDemo @JvmOverloads constructor(context: Context?, attrs: Attrib
 			strokeWidth = 30F
 		}
 
+		val uri =
+			"https://jie-storage-test.s3-accelerate.amazonaws.com/dm_media/ce191c40-b29c-4258-a34a-ca910a648d59/Wash_Your_Hands.mp4"
+		mediaPlayer = MediaPlayer()
+		try {
+			if (context != null) {
+				mediaPlayer.setDataSource(context, Uri.parse(uri))
+			}
+			mediaPlayer.setOnPreparedListener {
+				Log.d("XXXXX", "setOnPreparedListener")
+				it.start()
+				it.isLooping = true
+			}
+		} catch (e: IOException) {
+			e.printStackTrace()
+		}
+
 	}
 
+	@SuppressLint("ClickableViewAccessibility")
 	override fun onTouchEvent(event: MotionEvent): Boolean {
 		val eventX = event.x
 		val eventY = event.y
@@ -63,19 +84,21 @@ class SurfaceViewDemo @JvmOverloads constructor(context: Context?, attrs: Attrib
 		Log.d("XXXXX", "=======surfaceCreated========")
 		flag = true
 		path = Path()
-		mThread = Thread {
-			while (flag) {
-				try {
-					synchronized(holder) {
-						Thread.sleep(100)
-						refreshView()
-					}
-				} catch (e: InterruptedException) {
-					e.printStackTrace()
-				}
-			}
-		}
-		mThread.start()
+		mediaPlayer.setDisplay(holder)
+		mediaPlayer.prepare()
+//		mThread = Thread {
+//			while (flag) {
+//				try {
+//					synchronized(holder) {
+//						Thread.sleep(100)
+//						refreshView()
+//					}
+//				} catch (e: InterruptedException) {
+//					e.printStackTrace()
+//				}
+//			}
+//		}
+//		mThread.start()
 	}
 
 	private fun refreshView() {
