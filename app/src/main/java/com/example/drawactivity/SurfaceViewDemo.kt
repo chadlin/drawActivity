@@ -12,6 +12,7 @@ class SurfaceViewDemo @JvmOverloads constructor(context: Context?, attrs: Attrib
 
 	private var paint: Paint
 	private lateinit var path: Path
+	private lateinit var mCanvas: Canvas
 
 	init {
 		Log.d("XXXXX", "init:")
@@ -22,38 +23,43 @@ class SurfaceViewDemo @JvmOverloads constructor(context: Context?, attrs: Attrib
 		paint.apply {
 			color = Color.BLACK
 			isAntiAlias = true
-			strokeWidth = 50F
+			isDither = true
+			style = Paint.Style.STROKE
+			strokeJoin = Paint.Join.ROUND
+			strokeCap = Paint.Cap.ROUND
+			strokeWidth = 30F
 		}
 
+	}
+
+	override fun onTouchEvent(event: MotionEvent): Boolean {
+		val eventX = event.x
+		val eventY = event.y
+		when (event.action) {
+			MotionEvent.ACTION_DOWN -> {
+				path.reset()
+				path.moveTo(eventX, eventY)
+			}
+			MotionEvent.ACTION_MOVE -> {
+				path.lineTo(eventX, eventY)
+			}
+			MotionEvent.ACTION_UP -> {
+				path.lineTo(eventX, eventY)
+				mCanvas = holder.lockCanvas()
+				mCanvas.drawPath(path, paint)
+				holder.unlockCanvasAndPost(mCanvas)
+			}
+		}
+		mCanvas = holder.lockCanvas()
+		mCanvas.drawPath(path, paint)
+		holder.unlockCanvasAndPost(mCanvas)
+		return true
 	}
 
 	@SuppressLint("ClickableViewAccessibility")
 	override fun surfaceCreated(holder: SurfaceHolder) {
 		Log.d("XXXXX", "=======surfaceCreated========")
 		path = Path()
-		setOnTouchListener { _, event ->
-			val eventX = event.x
-			val eventY = event.y
-			when (event.action) {
-				MotionEvent.ACTION_DOWN -> {
-					path.reset()
-					path.moveTo(eventX, eventY)
-				}
-				MotionEvent.ACTION_MOVE -> {
-					path.lineTo(eventX, eventY)
-				}
-				MotionEvent.ACTION_UP -> {
-					path.lineTo(event.x, event.y)
-					val canvas1 = holder.lockCanvas()
-					canvas1.drawPath(path, paint)
-					holder.unlockCanvasAndPost(canvas1)
-				}
-			}
-			val canvas = holder.lockCanvas()
-			canvas.drawPath(path, paint)
-			holder.unlockCanvasAndPost(canvas)
-			true
-		}
 	}
 
 	override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {

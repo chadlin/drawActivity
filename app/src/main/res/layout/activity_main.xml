@@ -13,14 +13,13 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"/>
 
-    <SurfaceView
-        android:id="@+id/surfaceView"
+    <View
+        android:id="@+id/surfaceBackground"
         android:layout_width="500dp"
         android:layout_height="500dp"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/paint_board2"
-        android:visibility="gone">
-    </SurfaceView>
+        app:layout_constraintStart_toEndOf="@+id/paint_board2">
+    </View>
 
     <com.example.drawactivity.SurfaceViewDemo
         android:id="@+id/surfaceViewDemo"
@@ -53,6 +52,14 @@
             app:layout_constraintEnd_toEndOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <Button
+        android:id="@+id/changeColor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Change Color"
+        app:layout_constraintStart_toEndOf="@+id/surfaceViewDemo"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
