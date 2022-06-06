@@ -13,6 +13,8 @@ class SurfaceViewDemo @JvmOverloads constructor(context: Context?, attrs: Attrib
 	private var paint: Paint
 	private lateinit var path: Path
 	private lateinit var mCanvas: Canvas
+	private lateinit var mThread: Thread
+	private var flag: Boolean = false
 
 	init {
 		Log.d("XXXXX", "init:")
@@ -45,21 +47,42 @@ class SurfaceViewDemo @JvmOverloads constructor(context: Context?, attrs: Attrib
 			}
 			MotionEvent.ACTION_UP -> {
 				path.lineTo(eventX, eventY)
-				mCanvas = holder.lockCanvas()
-				mCanvas.drawPath(path, paint)
-				holder.unlockCanvasAndPost(mCanvas)
+//				mCanvas = holder.lockCanvas()
+//				mCanvas.drawPath(path, paint)
+//				holder.unlockCanvasAndPost(mCanvas)
 			}
 		}
-		mCanvas = holder.lockCanvas()
-		mCanvas.drawPath(path, paint)
-		holder.unlockCanvasAndPost(mCanvas)
+//		mCanvas = holder.lockCanvas()
+//		mCanvas.drawPath(path, paint)
+//		holder.unlockCanvasAndPost(mCanvas)
 		return true
 	}
 
 	@SuppressLint("ClickableViewAccessibility")
 	override fun surfaceCreated(holder: SurfaceHolder) {
 		Log.d("XXXXX", "=======surfaceCreated========")
+		flag = true
 		path = Path()
+		mThread = Thread {
+			while (flag) {
+				try {
+					synchronized(holder) {
+						Thread.sleep(100)
+						refreshView()
+					}
+				} catch (e: InterruptedException) {
+					e.printStackTrace()
+				}
+			}
+		}
+		mThread.start()
+	}
+
+	private fun refreshView() {
+		Log.d("XXXXX", "refreshView: refreshView")
+		mCanvas = holder.lockCanvas()
+		mCanvas.drawPath(path, paint)
+		holder.unlockCanvasAndPost(mCanvas)
 	}
 
 	override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
@@ -68,5 +91,6 @@ class SurfaceViewDemo @JvmOverloads constructor(context: Context?, attrs: Attrib
 
 	override fun surfaceDestroyed(holder: SurfaceHolder) {
 		Log.d("XXXXX", "=======surfaceDestroyed========")
+		flag = false
 	}
 }
