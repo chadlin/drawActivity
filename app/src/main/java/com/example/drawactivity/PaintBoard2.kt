@@ -33,7 +33,7 @@ class PaintBoard2 @JvmOverloads constructor(context: Context?, attrs: AttributeS
         if (::mBitmap.isInitialized) mBitmap.recycle()
         mBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
         mBitmapCanvas = Canvas(mBitmap)
-        mBitmapCanvas.drawColor(backgroundColor)
+        //mBitmapCanvas.drawColor(backgroundColor)
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -99,4 +99,6 @@ class PaintBoard2 @JvmOverloads constructor(context: Context?, attrs: AttributeS
     fun setHighliterMode(){
         statefulPaint.setMode(DrawMode.HIGHLIGHTER)
     }
+
+
 }

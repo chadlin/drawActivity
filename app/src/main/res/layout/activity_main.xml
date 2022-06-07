@@ -8,27 +8,28 @@
 
     <com.example.drawactivity.PaintBoard2
         android:id="@+id/paint_board2"
-        android:layout_width="500dp"
+        android:layout_width="1000dp"
         android:layout_height="500dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"/>
 
-    <View
-        android:id="@+id/surfaceBackground"
-        android:layout_width="500dp"
-        android:layout_height="500dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/paint_board2">
-    </View>
+    <VideoView
+        android:id="@+id/videoView"
+        android:layout_width="400dp"
+        android:layout_height="400dp"
+        app:layout_constraintBottom_toBottomOf="@+id/paint_board2"
+        app:layout_constraintEnd_toEndOf="@+id/paint_board2"
+        app:layout_constraintStart_toStartOf="@+id/paint_board2"
+        app:layout_constraintTop_toTopOf="@+id/paint_board2"></VideoView>
 
     <com.example.drawactivity.SurfaceViewDemo
         android:id="@+id/surfaceViewDemo"
-        android:layout_width="300dp"
-        android:layout_height="300dp"
-        app:layout_constraintBottom_toBottomOf="@+id/surfaceBackground"
-        app:layout_constraintEnd_toEndOf="@+id/surfaceBackground"
-        app:layout_constraintStart_toStartOf="@+id/surfaceBackground"
-        app:layout_constraintTop_toTopOf="@+id/surfaceBackground" />
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="@+id/videoView"
+        app:layout_constraintEnd_toEndOf="@+id/paint_board2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/videoView" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/doView"
@@ -60,8 +61,33 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Change Color"
-        app:layout_constraintStart_toEndOf="@+id/surfaceViewDemo"
+        app:layout_constraintStart_toEndOf="@+id/paint_board2"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/playButtonClickHandler"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Play"
+        app:layout_constraintStart_toEndOf="@+id/paint_board2"
+        app:layout_constraintTop_toBottomOf="@+id/changeColor" />
+
+
+    <Button
+        android:id="@+id/pauseButtonClickHandler"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pause"
+        app:layout_constraintStart_toEndOf="@+id/paint_board2"
+        app:layout_constraintTop_toBottomOf="@+id/playButtonClickHandler" />
+
+    <Button
+        android:id="@+id/stopButtonClickHandler"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Stop"
+        app:layout_constraintStart_toEndOf="@+id/paint_board2"
+        app:layout_constraintTop_toBottomOf="@+id/pauseButtonClickHandler" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

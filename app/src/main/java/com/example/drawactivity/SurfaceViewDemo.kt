@@ -27,7 +27,7 @@ class SurfaceViewDemo @JvmOverloads constructor(context: Context?, attrs: Attrib
 		holder.addCallback(this)
 		paint = Paint()
 		paint.apply {
-			color = Color.BLACK
+			color = Color.YELLOW
 			isAntiAlias = true
 			isDither = true
 			style = Paint.Style.STROKE
@@ -56,6 +56,7 @@ class SurfaceViewDemo @JvmOverloads constructor(context: Context?, attrs: Attrib
 
 	@SuppressLint("ClickableViewAccessibility")
 	override fun onTouchEvent(event: MotionEvent): Boolean {
+		Log.d("XXXXX", "onTouchEvent: ${event.action}")
 		val eventX = event.x
 		val eventY = event.y
 		when (event.action) {
@@ -84,21 +85,23 @@ class SurfaceViewDemo @JvmOverloads constructor(context: Context?, attrs: Attrib
 		Log.d("XXXXX", "=======surfaceCreated========")
 		flag = true
 		path = Path()
-		mediaPlayer.setDisplay(holder)
-		mediaPlayer.prepare()
-//		mThread = Thread {
-//			while (flag) {
-//				try {
-//					synchronized(holder) {
-//						Thread.sleep(100)
-//						refreshView()
-//					}
-//				} catch (e: InterruptedException) {
-//					e.printStackTrace()
-//				}
-//			}
-//		}
-//		mThread.start()
+//		mediaPlayer.setDisplay(holder)
+//		mediaPlayer.prepare()
+
+
+		mThread = Thread {
+			while (flag) {
+				try {
+					synchronized(holder) {
+						//Thread.sleep(100)
+						refreshView()
+					}
+				} catch (e: InterruptedException) {
+					e.printStackTrace()
+				}
+			}
+		}
+		mThread.start()
 	}
 
 	private fun refreshView() {

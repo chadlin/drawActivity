@@ -3,6 +3,7 @@ package com.example.drawactivity
 import android.annotation.SuppressLint
 import android.graphics.Canvas
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
@@ -10,6 +11,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.VideoView
 import androidx.appcompat.app.AppCompatActivity
 import kotlin.random.Random
 
@@ -18,8 +20,6 @@ class MainActivity : AppCompatActivity() {
 
 	private lateinit var paintBoard2: PaintBoard2
 	private lateinit var surfaceViewDemo: SurfaceViewDemo
-	private lateinit var surfaceBackground: View
-	private lateinit var button: Button
 	private lateinit var controlUndo: ImageView
 	private lateinit var controlRedo: ImageView
 	private lateinit var btnChangeColor: Button
@@ -27,6 +27,10 @@ class MainActivity : AppCompatActivity() {
 	private var currentSurfaceBackgroundColor = Color.WHITE
 
 	private lateinit var mCanvas: Canvas
+	private lateinit var videoView: VideoView
+	private lateinit var playButtonClickHandler: Button
+	private lateinit var pauseButtonClickHandler: Button
+	private lateinit var stopButtonClickHandler: Button
 
 
 	@SuppressLint("ClickableViewAccessibility")
@@ -36,7 +40,7 @@ class MainActivity : AppCompatActivity() {
 		paintBoard2 = findViewById(R.id.paint_board2)
 		paintBoard2.setLayerType(View.LAYER_TYPE_SOFTWARE, null)
 		surfaceViewDemo = findViewById(R.id.surfaceViewDemo)
-		surfaceBackground = findViewById(R.id.surfaceBackground)
+		videoView = findViewById(R.id.videoView)
 		btnChangeColor = findViewById(R.id.changeColor)
 		controlUndo = findViewById(R.id.ControlUndo)
 		controlRedo = findViewById(R.id.ControlRedo)
@@ -54,10 +58,36 @@ class MainActivity : AppCompatActivity() {
 		controlRedo.setOnClickListener {
 			paintBoard2.setRedo()
 		}
+		setupVideoView()
+	}
+
+	private fun setupVideoView() {
+		val uri =
+			"https://jie-storage-test.s3-accelerate.amazonaws.com/dm_media/ce191c40-b29c-4258-a34a-ca910a648d59/Wash_Your_Hands.mp4"
+		videoView = findViewById(R.id.videoView)
+		playButtonClickHandler = findViewById(R.id.playButtonClickHandler)
+		pauseButtonClickHandler = findViewById(R.id.pauseButtonClickHandler)
+		stopButtonClickHandler = findViewById(R.id.stopButtonClickHandler)
+		videoView.setVideoURI(Uri.parse(uri))
+		// hide medie controller
+		videoView.setMediaController(null)
+
+		playButtonClickHandler.setOnClickListener {
+			videoView.start()
+		}
+
+		pauseButtonClickHandler.setOnClickListener {
+			videoView.pause()
+		}
+
+		stopButtonClickHandler.setOnClickListener {
+			videoView.seekTo(0)
+			videoView.pause()
+		}
 	}
 
 	private fun changeSurfaceBackgroundColor(color: Int){
-		surfaceBackground.setBackgroundColor(color)
+		paintBoard2.setBackgroundColor(color)
 	}
 
 	override fun onCreateOptionsMenu(menu: Menu): Boolean {
