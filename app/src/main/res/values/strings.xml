@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">drawActivity</string>
+    <bool name="is_use_surface_view">true</bool>
 </resources>

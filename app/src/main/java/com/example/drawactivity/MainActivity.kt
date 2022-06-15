@@ -5,6 +5,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -18,8 +19,7 @@ import kotlin.random.Random
 
 class MainActivity : AppCompatActivity() {
 
-	private lateinit var paintBoard2: PaintBoard2
-	private lateinit var surfaceViewDemo: SurfaceViewDemo
+	private lateinit var iDrawView: IDrawView
 	private lateinit var controlUndo: ImageView
 	private lateinit var controlRedo: ImageView
 	private lateinit var btnChangeColor: Button
@@ -37,9 +37,14 @@ class MainActivity : AppCompatActivity() {
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		setContentView(R.layout.activity_main)
-		paintBoard2 = findViewById(R.id.paint_board2)
-		paintBoard2.setLayerType(View.LAYER_TYPE_SOFTWARE, null)
-		surfaceViewDemo = findViewById(R.id.surfaceViewDemo)
+		if (resources.getBoolean(R.bool.is_use_surface_view)) {
+			iDrawView = findViewById(R.id.surfaceViewDemo)
+			(iDrawView as SurfaceViewDemo).visibility = View.VISIBLE
+		} else {
+			iDrawView = findViewById(R.id.paint_board2)
+			(iDrawView as PaintBoard2).visibility = View.VISIBLE
+		}
+
 		videoView = findViewById(R.id.videoView)
 		btnChangeColor = findViewById(R.id.changeColor)
 		controlUndo = findViewById(R.id.ControlUndo)
@@ -52,11 +57,11 @@ class MainActivity : AppCompatActivity() {
 		}
 
 		controlUndo.setOnClickListener {
-			paintBoard2.setUndo()
+			//paintBoard2.setUndo()
 		}
 
 		controlRedo.setOnClickListener {
-			paintBoard2.setRedo()
+			//paintBoard2.setRedo()
 		}
 		setupVideoView()
 	}
@@ -86,8 +91,8 @@ class MainActivity : AppCompatActivity() {
 		}
 	}
 
-	private fun changeSurfaceBackgroundColor(color: Int){
-		paintBoard2.setBackgroundColor(color)
+	private fun changeSurfaceBackgroundColor(color: Int) {
+		//paintBoard2.setBackgroundColor(color)
 	}
 
 	override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -104,15 +109,15 @@ class MainActivity : AppCompatActivity() {
 		// Handle item selection
 		return when (item.itemId) {
 			R.id.draw -> {
-				paintBoard2.setPenMode()
+				//paintBoard2.setPenMode()
 				true
 			}
 			R.id.eraser -> {
-				paintBoard2.setEraserMode()
+				//paintBoard2.setEraserMode()
 				true
 			}
 			R.id.changeColor -> {
-				paintBoard2.setHighliterMode()
+				//paintBoard2.setHighliterMode()
 				true
 			}
 			else -> super.onOptionsItemSelected(item)

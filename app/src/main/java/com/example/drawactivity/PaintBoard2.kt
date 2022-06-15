@@ -4,13 +4,14 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
 import androidx.core.content.res.ResourcesCompat
 
 class PaintBoard2 @JvmOverloads constructor(context: Context?, attrs: AttributeSet? = null) :
-    View(context, attrs) {
+    View(context, attrs), IDrawView {
 
     private val TAG = javaClass.simpleName
     private var statefulPaint: StatefulPaint = StatefulPaint()
@@ -22,7 +23,7 @@ class PaintBoard2 @JvmOverloads constructor(context: Context?, attrs: AttributeS
     private var undoneStrokeList = ArrayList<Stroke>()
 
     private var renderObject:RenderObject
-    private var pen:Pen
+    private var pen:Pen = Pen(statefulPaint, touchTolerance)
 
     enum class DrawMode {
         DRAW, HIGHLIGHTER, ERASER, PALM_ERASER
@@ -84,7 +85,6 @@ class PaintBoard2 @JvmOverloads constructor(context: Context?, attrs: AttributeS
 
 
     init {
-        pen = Pen(statefulPaint, touchTolerance)
         renderObject = pen
     }
 
@@ -98,6 +98,10 @@ class PaintBoard2 @JvmOverloads constructor(context: Context?, attrs: AttributeS
 
     fun setHighliterMode(){
         statefulPaint.setMode(DrawMode.HIGHLIGHTER)
+    }
+
+    override fun refreshView() {
+        Log.d(TAG, "refreshView: $this")
     }
 
 
