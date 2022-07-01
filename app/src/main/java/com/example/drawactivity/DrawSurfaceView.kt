@@ -7,7 +7,7 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.*
 
-class SurfaceViewDemo @JvmOverloads constructor(context: Context?, attrs: AttributeSet? = null) :
+class DrawSurfaceView @JvmOverloads constructor(context: Context?, attrs: AttributeSet? = null) :
 	SurfaceView(context, attrs), SurfaceHolder.Callback, IDrawView {
 
 	private var statefulPaint: StatefulPaint = StatefulPaint()
@@ -18,6 +18,7 @@ class SurfaceViewDemo @JvmOverloads constructor(context: Context?, attrs: Attrib
 	private val touchTolerance = ViewConfiguration.get(context).scaledTouchSlop
 	private var pen: Pen = Pen(statefulPaint, touchTolerance)
 	private lateinit var list : MutableList<Stroke>
+	private lateinit var bitmapHolder: BitmapHolder
 
 	init {
 		Log.d("XXXXX", "init:")
@@ -46,39 +47,47 @@ class SurfaceViewDemo @JvmOverloads constructor(context: Context?, attrs: Attrib
 			}
 			MotionEvent.ACTION_UP -> {
 				renderObject.actionUp(event)
+				refreshView()
 			}
 		}
+		refreshView()
 		return true
 	}
 
 	@SuppressLint("ClickableViewAccessibility")
 	override fun surfaceCreated(holder: SurfaceHolder) {
 		Log.d("XXXXX", "=======surfaceCreated========")
-		flag = true
-		mThread = Thread {
-			while (flag) {
-				try {
-					synchronized(holder) {
-						//Thread.sleep(100)
-						refreshView()
+		if (flag) {
+			mThread = Thread {
+				while (true) {
+					try {
+						synchronized(holder) {
+							//Thread.sleep(100)
+							refreshView()
+						}
+					} catch (e: InterruptedException) {
+						e.printStackTrace()
 					}
-				} catch (e: InterruptedException) {
-					e.printStackTrace()
 				}
 			}
+			mThread.start()
 		}
-		mThread.start()
 	}
 
 	override fun refreshView() {
-		//Log.d("XXXXX", "refreshView: refreshView")
+		Log.d("XXXXX", "refreshView: refreshView")
 		mCanvas = holder.lockCanvas()
 		if (list.size > 0) {
 			for (stroke in list) {
 				mCanvas.drawPath(stroke.path, stroke.paint)
 			}
 		}
+		bitmapHolder.drawBitmap(mCanvas)
 		holder.unlockCanvasAndPost(mCanvas)
+	}
+
+	override fun setBitmapHolder(bitmapHolder: BitmapHolder) {
+		this.bitmapHolder = bitmapHolder
 	}
 
 	override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
@@ -87,6 +96,11 @@ class SurfaceViewDemo @JvmOverloads constructor(context: Context?, attrs: Attrib
 
 	override fun surfaceDestroyed(holder: SurfaceHolder) {
 		Log.d("XXXXX", "=======surfaceDestroyed========")
-		flag = false
+	}
+
+	private fun drawOnBitmapHolder(){
+		val canvas = holder.lockCanvas()
+		bitmapHolder.drawBitmap(canvas)
+		holder.unlockCanvasAndPost(canvas)
 	}
 }

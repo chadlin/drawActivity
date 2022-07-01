@@ -15,6 +15,7 @@ class PaintBoard2 @JvmOverloads constructor(context: Context?, attrs: AttributeS
 
     private val TAG = javaClass.simpleName
     private var statefulPaint: StatefulPaint = StatefulPaint()
+    private lateinit var bitmapHolder: BitmapHolder
     private val backgroundColor = ResourcesCompat.getColor(resources, R.color.colorBackground, null)
     private lateinit var mBitmap: Bitmap
     private lateinit var mBitmapCanvas: Canvas
@@ -63,6 +64,7 @@ class PaintBoard2 @JvmOverloads constructor(context: Context?, attrs: AttributeS
                 canvas.drawPath(stroke.path, stroke.paint)
             }
         }
+        bitmapHolder.drawBitmap(canvas)
     }
 
     fun setUndo() {
@@ -102,6 +104,10 @@ class PaintBoard2 @JvmOverloads constructor(context: Context?, attrs: AttributeS
 
     override fun refreshView() {
         Log.d(TAG, "refreshView: $this")
+    }
+
+    override fun setBitmapHolder(bitmapHolder: BitmapHolder) {
+        this.bitmapHolder = bitmapHolder
     }
 
 

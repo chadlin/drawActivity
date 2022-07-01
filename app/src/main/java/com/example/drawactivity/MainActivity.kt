@@ -1,11 +1,13 @@
 package com.example.drawactivity
 
 import android.annotation.SuppressLint
+import android.app.Application
 import android.graphics.Canvas
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
+import android.provider.MediaStore
+import android.util.DisplayMetrics
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -26,11 +28,12 @@ class MainActivity : AppCompatActivity() {
 	private val colors = intArrayOf(Color.WHITE, Color.GREEN, Color.MAGENTA, Color.BLUE)
 	private var currentSurfaceBackgroundColor = Color.WHITE
 
-	private lateinit var mCanvas: Canvas
+	private lateinit var stateHolder: StateHolder
 	private lateinit var videoView: VideoView
 	private lateinit var playButtonClickHandler: Button
 	private lateinit var pauseButtonClickHandler: Button
 	private lateinit var stopButtonClickHandler: Button
+	private lateinit var saveFile:Button
 
 
 	@SuppressLint("ClickableViewAccessibility")
@@ -39,11 +42,17 @@ class MainActivity : AppCompatActivity() {
 		setContentView(R.layout.activity_main)
 		if (resources.getBoolean(R.bool.is_use_surface_view)) {
 			iDrawView = findViewById(R.id.surfaceViewDemo)
-			(iDrawView as SurfaceViewDemo).visibility = View.VISIBLE
+			(iDrawView as DrawSurfaceView).visibility = View.VISIBLE
 		} else {
 			iDrawView = findViewById(R.id.paint_board2)
 			(iDrawView as PaintBoard2).visibility = View.VISIBLE
 		}
+
+
+
+		stateHolder = StateHolder(applicationContext)
+		stateHolder.onCreate()
+		iDrawView.setBitmapHolder(stateHolder)
 
 		videoView = findViewById(R.id.videoView)
 		btnChangeColor = findViewById(R.id.changeColor)
@@ -73,6 +82,7 @@ class MainActivity : AppCompatActivity() {
 		playButtonClickHandler = findViewById(R.id.playButtonClickHandler)
 		pauseButtonClickHandler = findViewById(R.id.pauseButtonClickHandler)
 		stopButtonClickHandler = findViewById(R.id.stopButtonClickHandler)
+		saveFile = findViewById(R.id.saveFile)
 		videoView.setVideoURI(Uri.parse(uri))
 		// hide medie controller
 		videoView.setMediaController(null)
@@ -88,6 +98,10 @@ class MainActivity : AppCompatActivity() {
 		stopButtonClickHandler.setOnClickListener {
 			videoView.seekTo(0)
 			videoView.pause()
+		}
+
+		saveFile.setOnClickListener{
+			stateHolder.saveMediaToStorage()
 		}
 	}
 

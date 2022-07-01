@@ -23,7 +23,7 @@
         app:layout_constraintStart_toStartOf="@+id/paint_board2"
         app:layout_constraintTop_toTopOf="@+id/paint_board2" />
 
-    <com.example.drawactivity.SurfaceViewDemo
+    <com.example.drawactivity.DrawSurfaceView
         android:id="@+id/surfaceViewDemo"
         android:layout_width="500dp"
         android:layout_height="500dp"
@@ -86,6 +86,14 @@
             android:layout_height="wrap_content"
             android:text="Stop"
             app:layout_constraintStart_toEndOf="@+id/pauseButtonClickHandler"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/saveFile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="saveFile"
+            app:layout_constraintStart_toEndOf="@+id/stopButtonClickHandler"
             app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
