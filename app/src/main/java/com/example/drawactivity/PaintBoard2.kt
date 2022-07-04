@@ -16,7 +16,6 @@ class PaintBoard2 @JvmOverloads constructor(context: Context?, attrs: AttributeS
     private val TAG = javaClass.simpleName
     private var statefulPaint: StatefulPaint = StatefulPaint()
     private lateinit var bitmapHolder: BitmapHolder
-    private val backgroundColor = ResourcesCompat.getColor(resources, R.color.colorBackground, null)
     private lateinit var mBitmap: Bitmap
     private lateinit var mBitmapCanvas: Canvas
     private val touchTolerance = ViewConfiguration.get(context).scaledTouchSlop
@@ -28,14 +27,6 @@ class PaintBoard2 @JvmOverloads constructor(context: Context?, attrs: AttributeS
 
     enum class DrawMode {
         DRAW, HIGHLIGHTER, ERASER, PALM_ERASER
-    }
-
-    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
-        super.onSizeChanged(w, h, oldw, oldh)
-        if (::mBitmap.isInitialized) mBitmap.recycle()
-        mBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-        mBitmapCanvas = Canvas(mBitmap)
-        //mBitmapCanvas.drawColor(backgroundColor)
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -58,13 +49,14 @@ class PaintBoard2 @JvmOverloads constructor(context: Context?, attrs: AttributeS
     }
 
     override fun onDraw(canvas: Canvas) {
-        canvas.drawBitmap(mBitmap, 0f, 0f, null)
+        Log.d(TAG, "onDraw: $canvas")
+        bitmapHolder.drawBitmap(canvas)
         if (renderObject.strokeList.size > 0) {
             for (stroke in renderObject.strokeList) {
                 canvas.drawPath(stroke.path, stroke.paint)
+                mBitmapCanvas.drawPath(stroke.path, stroke.paint)
             }
         }
-        bitmapHolder.drawBitmap(canvas)
     }
 
     fun setUndo() {
@@ -107,7 +99,10 @@ class PaintBoard2 @JvmOverloads constructor(context: Context?, attrs: AttributeS
     }
 
     override fun setBitmapHolder(bitmapHolder: BitmapHolder) {
+        mBitmapCanvas = bitmapHolder.getCanvas()
+        mBitmap = bitmapHolder.getBitmap()
         this.bitmapHolder = bitmapHolder
+        Log.d(TAG, "setBitmapHolder: ${this.bitmapHolder}, $mBitmap, $mBitmapCanvas")
     }
 
 

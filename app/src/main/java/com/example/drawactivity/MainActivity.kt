@@ -101,6 +101,7 @@ class MainActivity : AppCompatActivity() {
 		}
 
 		saveFile.setOnClickListener{
+			//iDrawView.drawBitmap()
 			stateHolder.saveMediaToStorage()
 		}
 	}
@@ -136,6 +137,11 @@ class MainActivity : AppCompatActivity() {
 			}
 			else -> super.onOptionsItemSelected(item)
 		}
+	}
+
+	override fun onDestroy() {
+		super.onDestroy()
+		stateHolder.onDestroy()
 	}
 
 }

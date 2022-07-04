@@ -4,10 +4,12 @@ import android.content.ContentValues
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
+import android.util.Log
 import android.widget.Toast
 import java.io.File
 import java.io.FileOutputStream
@@ -16,16 +18,35 @@ import java.io.OutputStream
 class StateHolder(private val context: Context) : BitmapHolder {
 
 	private lateinit var mCanvas: Canvas
-	private lateinit var bitmap: Bitmap
+	private lateinit var mBitmap: Bitmap
 
 
 	fun onCreate() {
-		bitmap = Bitmap.createBitmap(800, 800, Bitmap.Config.ARGB_8888)
-		mCanvas = Canvas(bitmap)
+		mBitmap = Bitmap.createBitmap(800, 800, Bitmap.Config.ARGB_8888)
+		mCanvas = Canvas(mBitmap)
+		mCanvas.drawColor(Color.BLUE)
+	}
+
+	fun onDestroy() {
+		if (!mBitmap.isRecycled) {
+			mBitmap.recycle()
+		}
 	}
 
 	override fun drawBitmap(canvas: Canvas) {
-		mCanvas.drawBitmap(bitmap, 0F, 0F, null)
+		Log.d("XXXXX", "drawBitmap: ${mBitmap.isRecycled}")
+		if (!mBitmap.isRecycled) {
+			Log.d("XXXXX", "drawBitmap: $canvas")
+			canvas.drawBitmap(mBitmap, 0F, 0F, null)
+		}
+	}
+
+	override fun getBitmap(): Bitmap {
+		return mBitmap
+	}
+
+	override fun getCanvas(): Canvas {
+		return mCanvas
 	}
 
 	fun saveMediaToStorage() {
@@ -67,7 +88,8 @@ class StateHolder(private val context: Context) : BitmapHolder {
 
 		fos?.use {
 			//Finally writing the bitmap to the output stream that we opened
-			bitmap.compress(Bitmap.CompressFormat.JPEG, 100, it)
+			Log.d("XXXXX", "saveMediaToStorage: $mBitmap")
+			mBitmap.compress(Bitmap.CompressFormat.JPEG, 100, it)
 			Toast.makeText(context, "Saved to Photos", Toast.LENGTH_LONG).show()
 		}
 	}

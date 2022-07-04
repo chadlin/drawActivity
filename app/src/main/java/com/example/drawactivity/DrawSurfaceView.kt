@@ -10,8 +10,8 @@ import android.view.*
 class DrawSurfaceView @JvmOverloads constructor(context: Context?, attrs: AttributeSet? = null) :
 	SurfaceView(context, attrs), SurfaceHolder.Callback, IDrawView {
 
+	private val TAG = javaClass.simpleName
 	private var statefulPaint: StatefulPaint = StatefulPaint()
-	private lateinit var mCanvas: Canvas
 	private lateinit var mThread: Thread
 	private var flag: Boolean = false
 	private var renderObject: RenderObject
@@ -19,6 +19,8 @@ class DrawSurfaceView @JvmOverloads constructor(context: Context?, attrs: Attrib
 	private var pen: Pen = Pen(statefulPaint, touchTolerance)
 	private lateinit var list : MutableList<Stroke>
 	private lateinit var bitmapHolder: BitmapHolder
+	private lateinit var mBitmap: Bitmap
+	private lateinit var mBitmapCanvas: Canvas
 
 	init {
 		Log.d("XXXXX", "init:")
@@ -76,18 +78,22 @@ class DrawSurfaceView @JvmOverloads constructor(context: Context?, attrs: Attrib
 
 	override fun refreshView() {
 		Log.d("XXXXX", "refreshView: refreshView")
-		mCanvas = holder.lockCanvas()
+		val canvas = holder.lockCanvas()
+		bitmapHolder.drawBitmap(canvas)
 		if (list.size > 0) {
 			for (stroke in list) {
-				mCanvas.drawPath(stroke.path, stroke.paint)
+				canvas.drawPath(stroke.path, stroke.paint)
+				mBitmapCanvas.drawPath(stroke.path, stroke.paint)
 			}
 		}
-		bitmapHolder.drawBitmap(mCanvas)
-		holder.unlockCanvasAndPost(mCanvas)
+		holder.unlockCanvasAndPost(canvas)
 	}
 
 	override fun setBitmapHolder(bitmapHolder: BitmapHolder) {
+		mBitmapCanvas = bitmapHolder.getCanvas()
+		mBitmap = bitmapHolder.getBitmap()
 		this.bitmapHolder = bitmapHolder
+		Log.d(TAG, "setBitmapHolder: ${this.bitmapHolder}, $mBitmap, $mBitmapCanvas")
 	}
 
 	override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
@@ -98,9 +104,4 @@ class DrawSurfaceView @JvmOverloads constructor(context: Context?, attrs: Attrib
 		Log.d("XXXXX", "=======surfaceDestroyed========")
 	}
 
-	private fun drawOnBitmapHolder(){
-		val canvas = holder.lockCanvas()
-		bitmapHolder.drawBitmap(canvas)
-		holder.unlockCanvasAndPost(canvas)
-	}
 }
